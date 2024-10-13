@@ -9,6 +9,7 @@ export type ConfigGitDiffFiles = {
   tableSheet: {
     id: number;
     diffFileRange: string;
+    columnsNumbers: ColumnsNumbers;
   };
   formSheet: {
     id: number;
@@ -17,11 +18,12 @@ export type ConfigGitDiffFiles = {
   };
 };
 
-export type DiffFile = {
-  initiativeName: string;
-  repositoryName: string;
-  filePath: string;
-};
+export type ColumnsNumbers = Record<
+  "initiativeName" | "repositoryName" | "filePath" | "createdAt" | "updatedAt",
+  number
+>;
+
+export type DiffFile = Record<"initiativeName" | "repositoryName" | "filePath", string>;
 
 export function writeGitDiffFiles(config: ConfigGitDiffFiles) {
   const incomingDiffFiles = getIncomingDiffFiles(config);

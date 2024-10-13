@@ -2,10 +2,10 @@
 
 // You can import modules from local or npm
 import { writeGitDiffFiles } from "./git-diff-files";
-import config from "./git-diff-files/config";
+// import config from "./git-diff-files/config";
 
-function execute() {
-  writeGitDiffFiles(config);
-}
+// function execute(config) {
+//   writeGitDiffFiles(config);
+// }
 
-export { execute };
+export { writeGitDiffFiles };

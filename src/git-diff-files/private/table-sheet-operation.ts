@@ -1,6 +1,6 @@
 import { formatDate } from "../../common-module/date-utils";
 import { getSheet } from "../../common-module/sheet-access";
-import type { ColumnsNumbers, ConfigGitDiffFiles, DiffFile } from "../index";
+import type { ColumnNumbers, ConfigGitDiffFiles, DiffFile } from "../index";
 
 export function updateAlreadyExistsDiffFileRows(
   config: ConfigGitDiffFiles,
@@ -11,7 +11,7 @@ export function updateAlreadyExistsDiffFileRows(
   const rowValues = sheet.getRange(config.tableSheet.diffFileRange).getValues();
   const lastIndex = rowValues.findLastIndex((row) => row.some((cell) => cell)); // 1つでもtruthyな値がある
 
-  const cns = { ...config.tableSheet.columnsNumbers };
+  const cns = { ...config.tableSheet.columnNumbers };
 
   for (let index = 0; index < lastIndex + 1; index++) {
     const currentRowNumber = index + 1;
@@ -27,19 +27,19 @@ export function updateAlreadyExistsDiffFileRows(
     if (!targetDiffFile) {
       continue;
     }
-    updateRows(sheet, cns, currentRowNumber, targetDiffFile);
+    updateRow(sheet, cns, currentRowNumber, targetDiffFile);
     completedDiffFiles.push(targetDiffFile);
   }
   return completedDiffFiles;
 }
 
-function updateRows(
+function updateRow(
   sheet: GoogleAppsScript.Spreadsheet.Sheet,
-  columnsNumbers: ColumnsNumbers,
+  columnNumbers: ColumnNumbers,
   rowNumber: number,
   diffFile: DiffFile,
 ) {
-  const cns = columnsNumbers;
+  const cns = columnNumbers;
   // sheet.getRange(rowNumber, cns.initiativeName).setValue(diffFile.initiativeName);
   // sheet.getRange(rowNumber, cns.repositoryName).setValue(diffFile.repositoryName);
   // sheet.getRange(rowNumber, cns.filePath).setValue(diffFile.filePath);
@@ -67,7 +67,7 @@ export function insertNewDiffFileRows(
       ),
   );
   if (remainingDiffFiles.length) {
-    const cn = { ...config.tableSheet.columnsNumbers };
+    const cn = { ...config.tableSheet.columnNumbers };
     insertRows(sheet, cn, lastRowNumber + 1, remainingDiffFiles);
   }
   return remainingDiffFiles;
@@ -75,18 +75,18 @@ export function insertNewDiffFileRows(
 
 function insertRows(
   sheet: GoogleAppsScript.Spreadsheet.Sheet,
-  columnsNumbers: ColumnsNumbers,
+  columnNumbers: ColumnNumbers,
   startRow: number,
   diffFiles: DiffFile[],
 ) {
-  const maxCol = Math.max(...Object.values(columnsNumbers));
+  const maxCol = Math.max(...Object.values(columnNumbers));
   const emptyArray: (string | undefined)[] = new Array(maxCol).fill(undefined);
   const nowDateTimeString = formatDate(new Date(), "YYYY-MM-DD HH:mm:ss");
 
   const rowValues = diffFiles.map((file) => {
     const rowValue = [...emptyArray];
 
-    const keys = Object.keys(columnsNumbers);
+    const keys = Object.keys(columnNumbers);
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i] as
         | "initiativeName"
@@ -95,7 +95,7 @@ function insertRows(
         | "createdAt"
         | "updatedAt";
 
-      const colIndex = columnsNumbers[key] - 1;
+      const colIndex = columnNumbers[key] - 1;
       if (key === "createdAt" || key === "updatedAt") {
         rowValue[colIndex] = nowDateTimeString;
       } else {

@@ -9,7 +9,7 @@ export type ConfigGitDiffFiles = {
   tableSheet: {
     id: number;
     diffFileRange: string;
-    columnsNumbers: ColumnsNumbers;
+    columnNumbers: ColumnNumbers;
   };
   formSheet: {
     id: number;
@@ -18,7 +18,7 @@ export type ConfigGitDiffFiles = {
   };
 };
 
-export type ColumnsNumbers = Record<
+export type ColumnNumbers = Record<
   "initiativeName" | "repositoryName" | "filePath" | "createdAt" | "updatedAt",
   number
 >;

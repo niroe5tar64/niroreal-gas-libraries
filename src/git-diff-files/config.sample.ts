@@ -5,7 +5,7 @@ const config: ConfigGitDiffFiles = {
   tableSheet: {
     id: 0,
     diffFileRange: "A:F",
-    columnsNumbers: {
+    columnNumbers: {
       initiativeName: 2, // B列
       repositoryName: 3, // C列
       filePath: 4, // D列

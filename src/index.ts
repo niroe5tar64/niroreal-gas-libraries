@@ -1,6 +1,11 @@
 // Entry file for GAS
 
 // You can import modules from local or npm
-import { execute } from "./git-diff-files";
+import { writeGitDiffFiles } from "./git-diff-files";
+import config from "./git-diff-files/config";
+
+function execute() {
+  writeGitDiffFiles(config);
+}
 
 export { execute };

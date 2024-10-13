@@ -2,12 +2,18 @@ import { formatDate } from "../common-module/date-utils";
 import { getSheet } from "../common-module/sheet-access";
 import { parseDiffFiles } from "./private/parse-diff-files";
 
-const TARGET_SPREADSHEET_ID = "";
-const TABLE_SHEET_ID = 0;
-const FORM_SHEET_ID = 0;
-const SELECT_INITIATIVE_NAME_CELL = "B1";
-const INPUT_FOR_DIFF_FILES_CELL = "B2";
-const DIFF_FILE_RANGE_IN_TABLE_SHEET = "A:F";
+export type ConfigGitDiffFiles = {
+  spreadSheetId: string;
+  tableSheet: {
+    id: number;
+    diffFileRange: string;
+  };
+  formSheet: {
+    id: number;
+    selectInitiativeNameCell: string;
+    inputForDiffFilesCell: string;
+  };
+};
 
 type DiffFile = {
   initiativeName: string;
@@ -15,11 +21,11 @@ type DiffFile = {
   filePath: string;
 };
 
-export function execute() {
+export function writeGitDiffFiles(config: ConfigGitDiffFiles) {
   const completedDiffFiles: DiffFile[] = [];
-  const incomingDiffFiles = getIncomingDiffFiles();
-  const sheet = getSheet({ spreadSheetId: TARGET_SPREADSHEET_ID, sheetId: TABLE_SHEET_ID });
-  const rowValues = sheet.getRange(DIFF_FILE_RANGE_IN_TABLE_SHEET).getValues();
+  const incomingDiffFiles = getIncomingDiffFiles(config);
+  const sheet = getSheet({ spreadSheetId: config.spreadSheetId, sheetId: config.tableSheet.id });
+  const rowValues = sheet.getRange(config.tableSheet.diffFileRange).getValues();
   const lastIndex = rowValues.findLastIndex((row) => row.some((cell) => cell)); // 1つでもtruthyな値がある
   const lastRowNumber = lastIndex + 1;
 
@@ -56,10 +62,10 @@ export function execute() {
   }
 }
 
-function getIncomingDiffFiles(): DiffFile[] {
-  const sheet = getSheet({ spreadSheetId: TARGET_SPREADSHEET_ID, sheetId: FORM_SHEET_ID });
-  const selectInitiativeNameCell = sheet.getRange(SELECT_INITIATIVE_NAME_CELL);
-  const inputDiffFilesCell = sheet.getRange(INPUT_FOR_DIFF_FILES_CELL);
+function getIncomingDiffFiles(config: ConfigGitDiffFiles): DiffFile[] {
+  const sheet = getSheet({ spreadSheetId: config.spreadSheetId, sheetId: config.formSheet.id });
+  const selectInitiativeNameCell = sheet.getRange(config.formSheet.selectInitiativeNameCell);
+  const inputDiffFilesCell = sheet.getRange(config.formSheet.inputForDiffFilesCell);
 
   const initiativeName = selectInitiativeNameCell.getValue();
   const inputText = inputDiffFilesCell.getValue();

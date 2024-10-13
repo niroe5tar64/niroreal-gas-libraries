@@ -177,3 +177,7 @@ dist
 dist
 
 .clasp*.json
+
+# 各機能の設定ファイル
+src/**/*config*.ts
+!src/**/*config*.sample.ts

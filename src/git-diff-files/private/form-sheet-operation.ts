@@ -1,4 +1,21 @@
-export function parseDiffFiles(inputText: string): { repositoryName: string; filePath: string }[] {
+import { getSheet } from "../../common-module/sheet-access";
+import type { ConfigGitDiffFiles, DiffFile } from "../index";
+
+export function getIncomingDiffFiles(config: ConfigGitDiffFiles): DiffFile[] {
+  const sheet = getSheet({ spreadSheetId: config.spreadSheetId, sheetId: config.formSheet.id });
+  const selectInitiativeNameCell = sheet.getRange(config.formSheet.selectInitiativeNameCell);
+  const inputDiffFilesCell = sheet.getRange(config.formSheet.inputForDiffFilesCell);
+
+  const initiativeName = selectInitiativeNameCell.getValue();
+  const inputText = inputDiffFilesCell.getValue();
+
+  const repositoryFiles = parseDiffFiles(inputText);
+  return repositoryFiles.map((obj) => {
+    return { ...obj, initiativeName };
+  });
+}
+
+function parseDiffFiles(inputText: string): { repositoryName: string; filePath: string }[] {
   const inputLines = inputText
     .split("\n")
     .map((line) => line.trim())

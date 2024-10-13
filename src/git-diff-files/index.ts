@@ -1,6 +1,6 @@
 import { formatDate } from "../common-module/date-utils";
 import { getSheet } from "../common-module/sheet-access";
-import { parseDiffFiles } from "./private/parse-diff-files";
+import { getIncomingDiffFiles } from "./private/form-sheet-operation";
 
 export type ConfigGitDiffFiles = {
   spreadSheetId: string;
@@ -15,7 +15,7 @@ export type ConfigGitDiffFiles = {
   };
 };
 
-type DiffFile = {
+export type DiffFile = {
   initiativeName: string;
   repositoryName: string;
   filePath: string;
@@ -60,20 +60,6 @@ export function writeGitDiffFiles(config: ConfigGitDiffFiles) {
   if (remainingDiffFiles.length) {
     insertRows(sheet, lastRowNumber + 1, remainingDiffFiles);
   }
-}
-
-function getIncomingDiffFiles(config: ConfigGitDiffFiles): DiffFile[] {
-  const sheet = getSheet({ spreadSheetId: config.spreadSheetId, sheetId: config.formSheet.id });
-  const selectInitiativeNameCell = sheet.getRange(config.formSheet.selectInitiativeNameCell);
-  const inputDiffFilesCell = sheet.getRange(config.formSheet.inputForDiffFilesCell);
-
-  const initiativeName = selectInitiativeNameCell.getValue();
-  const inputText = inputDiffFilesCell.getValue();
-
-  const repositoryFiles = parseDiffFiles(inputText);
-  return repositoryFiles.map((obj) => {
-    return { ...obj, initiativeName };
-  });
 }
 
 function updateRows(
